@@ -25,16 +25,26 @@ jobs:
           gradle-version: '8.2'
           cache-disabled: true
 
-      - name: Auto-Detect Project Directory & Build APK
+      - name: Auto-Detect Project Directory & Fix Code
         run: |
-          # Tự động tìm thư mục chứa code nếu bạn lỡ kéo cả thư mục cleantv vào
+          # 1. Tự tìm thư mục nếu code nằm trong thư mục con
           if [ ! -f "settings.gradle" ]; then
             TARGET_DIR=$(find . -name "settings.gradle" -not -path "*/.*" -exec dirname {} \; | head -n 1)
             if [ -n "$TARGET_DIR" ]; then
-              echo "Tìm thấy code trong thư mục: $TARGET_DIR"
+              echo "Di chuyển vào thư mục dự án: $TARGET_DIR"
               cd "$TARGET_DIR"
             fi
           fi
+
+          # 2. Tự động sửa lỗi quyền truy cập ViewHolder trong code Java
+          find . -name "AppGridAdapter.java" -exec sed -i 's/private static class ViewHolder/public static class ViewHolder/g' {} +
+          find . -name "AppGridAdapter.java" -exec sed -i 's/ImageView imgIcon/public ImageView imgIcon/g' {} +
+          find . -name "AppGridAdapter.java" -exec sed -i 's/TextView tvLabel/public TextView tvLabel/g' {} +
+
+          # 3. Tự động chấp nhận giấy phép Android SDK
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
+
+          # 4. Biên dịch APK
           echo "Bắt đầu biên dịch APK..."
           gradle assembleDebug --stacktrace
 
