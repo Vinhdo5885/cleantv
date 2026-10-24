@@ -25,34 +25,10 @@ jobs:
           gradle-version: '8.2'
           cache-disabled: true
 
-      - name: Auto-Detect Project Directory & Fix Code
+      - name: Build APK
         run: |
-          # 1. Tự tìm thư mục nếu code nằm trong thư mục con
-          if [ ! -f "settings.gradle" ]; then
-            TARGET_DIR=$(find . -name "settings.gradle" -not -path "*/.*" -exec dirname {} \; | head -n 1)
-            if [ -n "$TARGET_DIR" ]; then
-              echo "Di chuyển vào thư mục: $TARGET_DIR"
-              cd "$TARGET_DIR"
-            fi
-          fi
-
-          # 2. Tự sửa quyền truy cập ViewHolder
-          find . -name "AppGridAdapter.java" -exec sed -i 's/private static class ViewHolder/public static class ViewHolder/g' {} +
-          find . -name "AppGridAdapter.java" -exec sed -i 's/ImageView imgIcon/public ImageView imgIcon/g' {} +
-          find . -name "AppGridAdapter.java" -exec sed -i 's/TextView tvLabel/public TextView tvLabel/g' {} +
-
-          # 3. Chấp nhận giấy phép Android SDK
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses 2>/dev/null || true
-
-          # 4. Chạy Gradle và tự in lỗi ra trang Summary nếu có lỗi
-          echo "Bắt đầu biên dịch APK..."
-          gradle assembleDebug --stacktrace 2>&1 | tee build.log || {
-            echo "## ❌ CHI TIẾT LỖI BIÊN DỊCH:" >> $GITHUB_STEP_SUMMARY
-            echo '```text' >> $GITHUB_STEP_SUMMARY
-            tail -n 60 build.log >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            exit 1
-          }
+          gradle assembleDebug --stacktrace
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
