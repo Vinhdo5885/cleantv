@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_wallpaper"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/margin_horizontal"
+    android:paddingTop="20dp"
+    android:paddingRight="@dimen/margin_horizontal"
+    android:paddingBottom="20dp">
+
+    <!-- Top Header: Logo, Ngày tháng & Đồng hồ số lớn phong cách Apple TV -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CleanTV"
+                android:textColor="@color/text_primary"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Nút Cài đặt & Khôi phục app ẩn -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginRight="18dp"
+                android:background="@drawable/selector_card"
+                android:focusable="true"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
+                android:text="⚙ Cài đặt"
+                android:textColor="@color/text_primary"
+                android:textSize="13sp" />
+
+            <!-- Đồng hồ số lớn kiểu Apple TV (TextClock có sẵn từ Android 4.2+) -->
+            <TextClock
+                android:id="@+id/text_clock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:format24Hour="HH:mm"
+                android:textColor="@color/text_primary"
+                android:textSize="32sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <!-- Thân chính cuộn được -->
+    <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- PHẦN 1: DOCK ỨNG DỤNG YÊU THÍCH (FAVORITES) -->
+            <TextView
+                android:id="@+id/tv_title_favorites"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="10dp"
+                android:letterSpacing="0.05"
+                android:text="@string/favorites_title"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <HorizontalScrollView
+                android:id="@+id/scroll_dock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:paddingTop="6dp"
+                android:paddingBottom="14dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/layout_dock_apps"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
+
+            <!-- PHẦN 2: TẤT CẢ ỨNG DỤNG (GRID) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="12dp"
+                android:letterSpacing="0.05"
+                android:text="@string/all_apps_title"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <!-- Grid chứa các thẻ ứng dụng -->
+            <com.cleantv.launcher.view.TvGridView
+                android:id="@+id/grid_all_apps"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:horizontalSpacing="@dimen/card_spacing"
+                android:numColumns="5"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="@dimen/card_spacing" />
+
+            <!-- Trạng thái trống / đang tải -->
+            <TextView
+                android:id="@+id/tv_loading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="30dp"
+                android:text="@string/no_apps_found"
+                android:textColor="@color/text_secondary"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+            <!-- Khoảng đệm dưới cùng khi cuộn remote -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

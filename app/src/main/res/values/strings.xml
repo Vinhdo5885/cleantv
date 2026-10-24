@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CleanTV</string>
+    <string name="favorites_title">ỨNG DỤNG YÊU THÍCH</string>
+    <string name="all_apps_title">TẤT CẢ ỨNG DỤNG</string>
+    <string name="no_apps_found">Đang tải ứng dụng...</string>
+    <string name="settings">Cài đặt</string>
+    
+    <!-- Menu tùy chọn khi giữ nút OK -->
+    <string name="action_open">Mở ứng dụng</string>
+    <string name="action_add_favorite">Ghim lên Mục Yêu Thích</string>
+    <string name="action_remove_favorite">Bỏ ghim khỏi Mục Yêu Thích</string>
+    <string name="action_hide_app">Ẩn ứng dụng</string>
+    <string name="action_unhide_apps">Khôi phục ứng dụng đã ẩn</string>
+    <string name="action_app_info">Thông tin ứng dụng</string>
+    <string name="action_uninstall">Gỡ cài đặt</string>
+    <string name="dialog_cancel">Đóng</string>
+    
+    <string name="msg_unhidden_all">Đã khôi phục tất cả ứng dụng bị ẩn</string>
+    <string name="msg_app_hidden">Đã ẩn ứng dụng</string>
+</resources>

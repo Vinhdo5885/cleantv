@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="400dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Header ứng dụng -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="18dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/dialog_app_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:id="@+id/dialog_app_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:layout_weight="1"
+            android:textColor="@color/text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="12dp"
+        android:background="#20FFFFFF" />
+
+    <!-- Danh sách hành động điều khiển bằng remote -->
+    <Button
+        android:id="@+id/btn_action_open"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@drawable/selector_dialog_item"
+        android:focusable="true"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="16dp"
+        android:text="▶  Mở ứng dụng"
+        android:textColor="@color/text_primary"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/btn_action_favorite"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@drawable/selector_dialog_item"
+        android:focusable="true"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="16dp"
+        android:text="★  Ghim lên Mục Yêu Thích"
+        android:textColor="@color/text_primary"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/btn_action_hide"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@drawable/selector_dialog_item"
+        android:focusable="true"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="16dp"
+        android:text="👁  Ẩn ứng dụng khỏi màn hình"
+        android:textColor="@color/text_primary"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/btn_action_info"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@drawable/selector_dialog_item"
+        android:focusable="true"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="16dp"
+        android:text="ℹ  Thông tin ứng dụng"
+        android:textColor="@color/text_primary"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/btn_action_uninstall"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@drawable/selector_dialog_item"
+        android:focusable="true"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="16dp"
+        android:text="🗑  Gỡ cài đặt"
+        android:textColor="#F87171"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/btn_action_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/selector_dialog_item"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="Đóng"
+        android:textColor="@color/text_secondary"
+        android:textSize="14sp" />
+
+</LinearLayout>

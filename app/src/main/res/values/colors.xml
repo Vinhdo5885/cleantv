@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Màu nền phong cách Apple TV Dark Glass -->
+    <color name="bg_dark_gradient_start">#12131C</color>
+    <color name="bg_dark_gradient_end">#08090D</color>
+    
+    <!-- Màu thẻ ứng dụng -->
+    <color name="card_bg_normal">#20FFFFFF</color>
+    <color name="card_bg_focused">#E6FFFFFF</color>
+    <color name="card_stroke_normal">#15FFFFFF</color>
+    <color name="card_stroke_focused">#FFFFFFFF</color>
+    
+    <!-- Văn bản -->
+    <color name="text_primary">#F3F4F6</color>
+    <color name="text_secondary">#9CA3AF</color>
+    <color name="text_focused">#111827</color>
+    
+    <!-- Màu Dock kính mờ -->
+    <color name="dock_bg">#18FFFFFF</color>
+    <color name="dock_stroke">#1EFFFFFF</color>
+    
+    <!-- Hộp thoại -->
+    <color name="dialog_bg">#1F212D</color>
+    <color name="accent_blue">#3B82F6</color>
+</resources>

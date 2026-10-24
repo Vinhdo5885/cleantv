@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Giao diện toàn màn hình, không thanh điều hướng cho Android TV -->
+    <style name="Theme.CleanTV" parent="@android:style/Theme.NoTitleBar.Fullscreen">
+        <item name="android:windowBackground">@drawable/bg_wallpaper</item>
+        <item name="android:colorBackground">@color/bg_dark_gradient_end</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+</resources>
