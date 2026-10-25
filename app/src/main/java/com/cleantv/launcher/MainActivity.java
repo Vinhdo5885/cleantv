@@ -248,7 +248,7 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (hasFocus) {
-                        v.animate().scaleX(1.15f).scaleY(1.15f).setDuration(120).start();
+                        v.animate().scaleX(1.10f).scaleY(1.10f).setDuration(140).start();
                         v.bringToFront();
                         updateTopShelf(app);
                     } else {
