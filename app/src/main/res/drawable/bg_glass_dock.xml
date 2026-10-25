@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hiệu ứng Kính Lỏng (Liquid Glass) chuẩn iOS/tvOS -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Lớp bóng đổ nền chìm tạo độ sâu 3D -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="30dp" />
+            <solid android:color="#25000000" />
+        </shape>
+    </item>
+    <!-- Lớp Kính Lỏng (Liquid Glass): Khúc xạ ánh sáng từ đỉnh xuống đáy -->
+    <item
+        android:bottom="1dp"
+        android:left="1dp"
+        android:right="1dp"
+        android:top="1dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="30dp" />
+            <gradient
+                android:angle="270"
+                android:startColor="#4AFFFFFF"
+                android:centerColor="#1CFFFFFF"
+                android:endColor="#0CFFFFFF"
+                android:type="linear" />
+            <!-- Viền sáng lỏng phản quang (Specular Rim Light) -->
+            <stroke
+                android:width="1.5dp"
+                android:color="#58FFFFFF" />
+        </shape>
+    </item>
+</layer-list>
