@@ -147,7 +147,7 @@ public class PrefUtils {
         while (recent.size() > 10) recent.remove(recent.size() - 1);
         StringBuilder stored = new StringBuilder();
         for (String item : recent) {
-            if (stored.length() > 0) stored.append("\\n");
+            if (stored.length() > 0) stored.append("\n");
             stored.append(item);
         }
         getPrefs(context).edit().putString(KEY_RECENT_APPS, stored.toString()).apply();
