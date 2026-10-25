@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_wallpaper"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp">
+
+    <!-- Container kính lỏng Liquid Glass trung tâm -->
+    <LinearLayout
+        android:layout_width="560dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_top_shelf"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="36dp">
+
+        <!-- Biểu tượng khóa 3D / TV -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🔒"
+            android:textSize="56sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="ĐÃ HẾT THỜI GIAN XEM TV"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Màn hình đã bị khóa. Vui lòng cho mắt nghỉ ngơi!"
+            android:textColor="#9CA3AF"
+            android:textSize="15sp" />
+
+        <!-- Đồng hồ hiển thị thời gian hiện tại -->
+        <TextClock
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:format24Hour="HH:mm"
+            android:textColor="#60A5FA"
+            android:textSize="32sp"
+            android:textStyle="bold" />
+
+        <!-- Gợi ý mở khóa bí mật -->
+        <TextView
+            android:id="@+id/tv_secret_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_glass_dock"
+            android:paddingLeft="16dp"
+            android:paddingTop="8dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="8dp"
+            android:text="Bấm phím OK 5 lần liên tiếp trên Remote để mở khóa"
+            android:textColor="#D1D5DB"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+</LinearLayout>
