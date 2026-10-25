@@ -54,6 +54,7 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
     private TvGridView gridAllApps;
     private TextView tvLoading;
     private Button btnAllApps;
+    private TextView tvTitleAllApps;
     private boolean showingAllApps = false;
 
     private List<AppModel> allApps = new ArrayList<>();
@@ -100,6 +101,7 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
         gridAllApps = (TvGridView) findViewById(R.id.grid_all_apps);
         tvLoading = (TextView) findViewById(R.id.tv_loading);
         btnAllApps = (Button) findViewById(R.id.btn_all_apps);
+        tvTitleAllApps = (TextView) findViewById(R.id.tv_title_all_apps);
         btnAllApps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
