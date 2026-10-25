@@ -18,6 +18,7 @@ public class AppGridAdapter extends BaseAdapter {
     public interface OnAppActionListener {
         void onAppClick(AppModel app);
         void onAppLongClick(AppModel app);
+        void onAppFocused(AppModel app);
     }
 
     private final Context context;
@@ -64,14 +65,16 @@ public class AppGridAdapter extends BaseAdapter {
         holder.tvLabel.setText(app.getLabel());
         holder.imgIcon.setImageDrawable(app.getIcon());
 
-        // Hiệu ứng phóng to mượt mà chuẩn Apple TV khi remote di chuyển đến
+        // Hiệu ứng Focus và cập nhật Top Shelf kiểu Apple TV
         convertView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    v.animate().scaleX(1.10f).scaleY(1.10f).setDuration(120).start();
-                    // Đưa view lên trên cùng để viền không bị các view khác che
+                    v.animate().scaleX(1.12f).scaleY(1.12f).setDuration(120).start();
                     v.bringToFront();
+                    if (listener != null) {
+                        listener.onAppFocused(app);
+                    }
                 } else {
                     v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(120).start();
                 }
