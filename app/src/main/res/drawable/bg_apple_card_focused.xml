@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hiệu ứng Focus Liquid Glass: Ánh sáng lan tỏa (Glow) và viền lỏng sắc nét -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Quầng sáng lỏng (Liquid Glow Halo) bao quanh -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="24dp" />
+            <solid android:color="#35FFFFFF" />
+        </shape>
+    </item>
+    <!-- Thân thẻ kính lỏng phản chiếu ánh sáng cực đại -->
+    <item
+        android:bottom="2dp"
+        android:left="2dp"
+        android:right="2dp"
+        android:top="2dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="22dp" />
+            <gradient
+                android:angle="270"
+                android:startColor="#80FFFFFF"
+                android:centerColor="#35FFFFFF"
+                android:endColor="#1EFFFFFF"
+                android:type="linear" />
+            <stroke
+                android:width="2.5dp"
+                android:color="#FFFFFFFF" />
+        </shape>
+    </item>
+</layer-list>
