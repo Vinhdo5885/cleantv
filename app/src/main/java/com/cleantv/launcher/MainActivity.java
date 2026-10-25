@@ -221,7 +221,6 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
                 renderGrid();
 
                 // Spotify chỉ xuất hiện khi ứng dụng đã cài và có thể được mở.
-                btnSpotify.setVisibility(isPackageLaunchable("com.spotify.music") ? View.VISIBLE : View.GONE);
 
                 if (!favoriteApps.isEmpty()) {
                     updateTopShelf(favoriteApps.get(0));
