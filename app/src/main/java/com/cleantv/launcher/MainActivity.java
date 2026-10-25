@@ -8,6 +8,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -31,6 +34,10 @@ import com.cleantv.launcher.service.LockTimerService;
 import com.cleantv.launcher.utils.PrefUtils;
 import com.cleantv.launcher.view.TvGridView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,6 +64,8 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
     private View spacerDockTop;
     private TextView tvTitleAllApps;
     private boolean showingAllApps = false;
+    private static final int REQUEST_WALLPAPER = 7201;
+    private View homeRoot;
 
     private List<AppModel> allApps = new ArrayList<>();
     private List<AppModel> favoriteApps = new ArrayList<>();
@@ -66,8 +75,10 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        homeRoot = ((android.view.ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
 
         initViews();
+        applySavedWallpaper();
         updateDate();
 
         // Khởi động dịch vụ theo dõi hẹn giờ khóa màn hình
@@ -427,7 +438,16 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
             btnTimerLock.setText("⏱  Hẹn giờ khóa màn hình (15p, 30p, 1h...)");
         }
 
-        btnUninstall.setVisibility(View.GONE);
+        btnUninstall.setVisibility(View.VISIBLE);
+        btnUninstall.setText("🖼  Chọn ảnh nền từ USB / bộ nhớ");
+
+        btnUninstall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                chooseWallpaper();
+            }
+        });
 
         btnOpenSettings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -477,6 +497,88 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
         });
 
         dialog.show();
+    }
+
+    private File getWallpaperFile() {
+        return new File(getFilesDir(), "cleantv_wallpaper.jpg");
+    }
+
+    private void chooseWallpaper() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(Intent.createChooser(intent, "Chọn ảnh nền"), REQUEST_WALLPAPER);
+        } catch (Exception e) {
+            Toast.makeText(this, "Không mở được trình chọn ảnh. Hãy thử ứng dụng Thư viện hoặc Quản lý tệp.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != REQUEST_WALLPAPER || resultCode != RESULT_OK || data == null || data.getData() == null) {
+            return;
+        }
+
+        InputStream input = null;
+        FileOutputStream output = null;
+        File tempFile = new File(getFilesDir(), "cleantv_wallpaper.tmp");
+        try {
+            input = getContentResolver().openInputStream(data.getData());
+            if (input == null) throw new IOException("Không đọc được ảnh đã chọn");
+            output = new FileOutputStream(tempFile);
+            byte[] buffer = new byte[8192];
+            int count;
+            while ((count = input.read(buffer)) != -1) {
+                output.write(buffer, 0, count);
+            }
+            output.flush();
+            output.close();
+            output = null;
+            input.close();
+            input = null;
+
+            File wallpaper = getWallpaperFile();
+            if (wallpaper.exists() && !wallpaper.delete()) {
+                throw new IOException("Không thể thay ảnh nền cũ");
+            }
+            if (!tempFile.renameTo(wallpaper)) {
+                throw new IOException("Không thể lưu ảnh nền");
+            }
+            applySavedWallpaper();
+            Toast.makeText(this, "Đã đặt ảnh nền CleanTV", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            if (tempFile.exists()) tempFile.delete();
+            Toast.makeText(this, "Không thể dùng ảnh này. Hãy chọn JPG hoặc PNG khác.", Toast.LENGTH_LONG).show();
+        } finally {
+            try { if (input != null) input.close(); } catch (IOException ignored) { }
+            try { if (output != null) output.close(); } catch (IOException ignored) { }
+        }
+    }
+
+    private void applySavedWallpaper() {
+        File file = getWallpaperFile();
+        if (homeRoot == null || !file.exists()) return;
+        try {
+            BitmapFactory.Options bounds = new BitmapFactory.Options();
+            bounds.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(file.getAbsolutePath(), bounds);
+            int sample = 1;
+            while (bounds.outWidth / sample > 1920 || bounds.outHeight / sample > 1080) {
+                sample *= 2;
+            }
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = sample;
+            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+            if (bitmap != null) {
+                homeRoot.setBackground(new BitmapDrawable(getResources(), bitmap));
+            }
+        } catch (OutOfMemoryError e) {
+            Toast.makeText(this, "Ảnh quá lớn đối với SmartBox. Hãy dùng ảnh nhỏ hơn.", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Không thể tải ảnh nền đã lưu.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
