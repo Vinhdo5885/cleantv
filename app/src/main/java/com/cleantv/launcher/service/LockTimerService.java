@@ -39,12 +39,9 @@ public class LockTimerService extends Service {
                 long usedMillis = PrefUtils.getDailyUsedMillis(LockTimerService.this);
                 long limitMillis = Math.max(0, limitMinutes) * 60000L;
 
-                if (inHours && !PrefUtils.isScreenLocked(LockTimerService.this)) {
-                    PrefUtils.addDailyUsedMillis(LockTimerService.this, delta);
-                    usedMillis += delta;
-                }
+                boolean dailyLimitReached = limitMinutes > 0 && usedMillis >= limitMillis;
+                boolean timeExpired = !inHours || dailyLimitReached;
 
-                boolean timeExpired = !inHours || (limitMinutes > 0 && usedMillis >= limitMillis);
                 if (timeExpired) {
                     PrefUtils.setScreenLocked(LockTimerService.this, true);
                     if (!lockScreenShown) {
@@ -52,7 +49,11 @@ public class LockTimerService extends Service {
                         showLockScreen();
                     }
                 } else {
+                    if (PrefUtils.isScreenLocked(LockTimerService.this)) {
+                        PrefUtils.setScreenLocked(LockTimerService.this, false);
+                    }
                     lockScreenShown = false;
+                    PrefUtils.addDailyUsedMillis(LockTimerService.this, delta);
                 }
                 handler.postDelayed(this, 5000L);
             }
