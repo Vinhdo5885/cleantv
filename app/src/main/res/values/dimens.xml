@@ -6,11 +6,11 @@
     <dimen name="card_icon_size">64dp</dimen>
     <dimen name="card_corner_radius">18dp</dimen>
     
-    <dimen name="dock_card_width">170dp</dimen>
-    <dimen name="dock_card_height">140dp</dimen>
-    <dimen name="dock_icon_size">72dp</dimen>
+    <dimen name="dock_card_width">112dp</dimen>
+    <dimen name="dock_card_height">96dp</dimen>
+    <dimen name="dock_icon_size">46dp</dimen>
     
     <dimen name="margin_horizontal">36dp</dimen>
     <dimen name="margin_vertical">24dp</dimen>
-    <dimen name="card_spacing">16dp</dimen>
+    <dimen name="card_spacing">10dp</dimen>
 </resources>
