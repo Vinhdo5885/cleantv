@@ -1,30 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Sky: blue-hour cinematic gradient instead of near-black gray -->
+    <!-- Cinematic blue-hour sky -->
     <item>
         <shape android:shape="rectangle">
-            <gradient
-                android:angle="270"
-                android:startColor="#397FB0"
-                android:centerColor="#173D5D"
-                android:endColor="#081725"
-                android:type="linear" />
+            <gradient android:angle="270" android:startColor="#79B9E7" android:centerColor="#245B83" android:endColor="#0B1C31" android:type="linear" />
         </shape>
     </item>
-    <!-- Distant mountain ridge -->
-    <item
-        android:gravity="bottom"
-        android:height="230dp">
-        <shape android:shape="oval">
-            <solid android:color="#183B49" />
+    <!-- Soft distant mountain range -->
+    <item android:gravity="bottom" android:height="250dp">
+        <shape android:shape="rectangle">
+            <gradient android:angle="0" android:startColor="#203F5A" android:centerColor="#355F78" android:endColor="#1D3B55" android:type="linear" />
         </shape>
     </item>
-    <!-- Foreground landscape silhouette -->
-    <item
-        android:gravity="bottom"
-        android:height="150dp">
-        <shape android:shape="oval">
-            <solid android:color="#0B282B" />
+    <!-- Low dark foreground ridge -->
+    <item android:gravity="bottom" android:height="125dp">
+        <shape android:shape="rectangle">
+            <gradient android:angle="0" android:startColor="#102D38" android:centerColor="#163D43" android:endColor="#0A202B" android:type="linear" />
+        </shape>
+    </item>
+    <!-- Subtle lower vignette for readable app labels -->
+    <item android:gravity="bottom" android:height="210dp">
+        <shape android:shape="rectangle">
+            <gradient android:angle="270" android:startColor="#00000000" android:centerColor="#44051320" android:endColor="#AA06111D" android:type="linear" />
         </shape>
     </item>
 </layer-list>
