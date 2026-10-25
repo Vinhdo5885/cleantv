@@ -24,6 +24,12 @@ public class PrefUtils {
     private static final String KEY_LOCK_MINUTES = "key_lock_minutes";
     private static final String KEY_IS_LOCKED = "key_is_locked";
     private static final String KEY_LOCK_START_TIME = "key_lock_start_time";
+    private static final String KEY_ALLOWED_START = "key_allowed_start";
+    private static final String KEY_ALLOWED_END = "key_allowed_end";
+    private static final String KEY_DAILY_LIMIT = "key_daily_limit";
+    private static final String KEY_DAILY_USED = "key_daily_used";
+    private static final String KEY_DAILY_DATE = "key_daily_date";
+    private static final String KEY_SETTINGS_PIN = "key_settings_pin";
 
     public static final String[] DEFAULT_VNPT_BLACKLIST = {
             "com.vnpt.smartbox.launcher",
@@ -102,6 +108,65 @@ public class PrefUtils {
 
         // Chấp nhận cả 2 định dạng giờ và mã cứu hộ 888888
         return clean.equals(codeHHddMM) || clean.equals(codeDdMMHH) || clean.equals("888888");
+    }
+
+    // Giới hạn khung giờ và tổng thời lượng mỗi ngày.
+    public static int getAllowedStartHour(Context context) {
+        return getPrefs(context).getInt(KEY_ALLOWED_START, 6);
+    }
+
+    public static int getAllowedEndHour(Context context) {
+        return getPrefs(context).getInt(KEY_ALLOWED_END, 22);
+    }
+
+    public static void setAllowedHours(Context context, int startHour, int endHour) {
+        getPrefs(context).edit().putInt(KEY_ALLOWED_START, startHour)
+                .putInt(KEY_ALLOWED_END, endHour).apply();
+    }
+
+    public static int getDailyLimitMinutes(Context context) {
+        return getPrefs(context).getInt(KEY_DAILY_LIMIT, 180);
+    }
+
+    public static void setDailyLimitMinutes(Context context, int minutes) {
+        getPrefs(context).edit().putInt(KEY_DAILY_LIMIT, minutes).apply();
+    }
+
+    public static long getDailyUsedMillis(Context context) {
+        String today = new SimpleDateFormat("yyyyMMdd", Locale.US).format(new Date());
+        String savedDay = getPrefs(context).getString(KEY_DAILY_DATE, "");
+        if (!today.equals(savedDay)) {
+            getPrefs(context).edit().putString(KEY_DAILY_DATE, today)
+                    .putLong(KEY_DAILY_USED, 0L).apply();
+            return 0L;
+        }
+        return getPrefs(context).getLong(KEY_DAILY_USED, 0L);
+    }
+
+    public static void addDailyUsedMillis(Context context, long millis) {
+        String today = new SimpleDateFormat("yyyyMMdd", Locale.US).format(new Date());
+        String savedDay = getPrefs(context).getString(KEY_DAILY_DATE, "");
+        long used = today.equals(savedDay) ? getPrefs(context).getLong(KEY_DAILY_USED, 0L) : 0L;
+        getPrefs(context).edit().putString(KEY_DAILY_DATE, today)
+                .putLong(KEY_DAILY_USED, used + Math.max(0L, millis)).apply();
+    }
+
+    public static String getSettingsPin(Context context) {
+        return getPrefs(context).getString(KEY_SETTINGS_PIN, "");
+    }
+
+    public static void setSettingsPin(Context context, String pin) {
+        getPrefs(context).edit().putString(KEY_SETTINGS_PIN, pin == null ? "" : pin).apply();
+    }
+
+    public static boolean isWithinAllowedHours(Context context) {
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        int hour = calendar.get(java.util.Calendar.HOUR_OF_DAY);
+        int start = getAllowedStartHour(context);
+        int end = getAllowedEndHour(context);
+        if (start == end) return true;
+        if (start < end) return hour >= start && hour < end;
+        return hour >= start || hour < end;
     }
 
     public static Set<String> getFavorites(Context context) {
