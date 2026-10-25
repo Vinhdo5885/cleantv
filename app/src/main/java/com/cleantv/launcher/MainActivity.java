@@ -657,25 +657,6 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
     }
 
     @Override
-            public void onClick(DialogInterface dialog, int which) {
-                int selectedMinutes = minutesValues[which];
-                PrefUtils.setLockDurationMinutes(MainActivity.this, selectedMinutes);
-                PrefUtils.setLockStartTime(MainActivity.this, System.currentTimeMillis());
-                PrefUtils.setScreenLocked(MainActivity.this, false);
-
-                if (selectedMinutes > 0) {
-                    Toast.makeText(MainActivity.this, "✓ Đã bật hẹn giờ: Khóa sau " + selectedMinutes + " phút!", Toast.LENGTH_LONG).show();
-                    LockTimerService.startTimer(MainActivity.this);
-                } else {
-                    Toast.makeText(MainActivity.this, "Đã tắt hẹn giờ khóa màn hình", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        builder.setNegativeButton("Đóng", null);
-        builder.show();
-    }
-
-    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU) {
             View focused = getCurrentFocus();
