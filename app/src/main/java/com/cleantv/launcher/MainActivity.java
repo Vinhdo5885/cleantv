@@ -183,7 +183,7 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
 
                 List<ResolveInfo> activities = pm.queryIntentActivities(mainIntent, 0);
                 Set<String> hiddenApps = PrefUtils.getHiddenApps(MainActivity.this);
-                Set<String> favorites = PrefUtils.getFavorites(MainActivity.this);
+                List<String> recentPackages = PrefUtils.getRecentApps(MainActivity.this);
                 String myPackage = getPackageName();
 
                 if (activities != null) {
@@ -197,25 +197,22 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
                         String activityName = ri.activityInfo.name;
 
                         AppModel app = new AppModel(pkg, activityName, label, icon);
-                        if (favorites.contains(pkg)) {
-                            app.setFavorite(true);
-                            tempFavs.add(app);
-                        }
                         tempAll.add(app);
                     }
                 }
 
                 Collections.sort(tempAll);
-                Collections.sort(tempFavs);
-
-                if (tempFavs.isEmpty() && !tempAll.isEmpty()) {
-                    int count = Math.min(tempAll.size(), 4);
-                    for (int i = 0; i < count; i++) {
-                        AppModel defaultFav = tempAll.get(i);
-                        defaultFav.setFavorite(true);
-                        tempFavs.add(defaultFav);
-                        PrefUtils.addFavorite(MainActivity.this, defaultFav.getPackageName());
+                for (String recentPackage : recentPackages) {
+                    for (AppModel app : tempAll) {
+                        if (app.getPackageName().equals(recentPackage)) {
+                            tempFavs.add(app);
+                            break;
+                        }
                     }
+                }
+                if (tempFavs.isEmpty() && !tempAll.isEmpty()) {
+                    int count = Math.min(tempAll.size(), 5);
+                    for (int i = 0; i < count; i++) tempFavs.add(tempAll.get(i));
                 }
 
                 return null;
@@ -247,7 +244,8 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
             return;
         }
 
-        tvTitleFavorites.setVisibility(View.GONE);
+        tvTitleFavorites.setText("ỨNG DỤNG MỞ GẦN ĐÂY");
+        tvTitleFavorites.setVisibility(View.VISIBLE);
         scrollDock.setVisibility(View.VISIBLE);
 
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -299,6 +297,7 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
 
     @Override
     public void onAppClick(AppModel app) {
+        PrefUtils.recordRecentApp(this, app.getPackageName());
         try {
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
