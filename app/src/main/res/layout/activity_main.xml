@@ -123,54 +123,14 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <!-- Lối tắt dịch vụ: mở ứng dụng đã cài, không nhúng nội dung bên trong CleanTV -->
-            <LinearLayout
-                android:id="@+id/layout_media_shortcuts"
+            <View
+                android:id="@+id/spacer_dock_top"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:gravity="start|center_vertical"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/btn_vtvgo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="44dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/selector_card"
-                    android:focusable="true"
-                    android:minWidth="100dp"
-                    android:text="▶  VTVgo"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp" />
-
-                <Button
-                    android:id="@+id/btn_youtube"
-                    android:layout_width="wrap_content"
-                    android:layout_height="44dp"
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/selector_card"
-                    android:focusable="true"
-                    android:minWidth="100dp"
-                    android:text="▶  YouTube"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp" />
-
-                <Button
-                    android:id="@+id/btn_spotify"
-                    android:layout_width="wrap_content"
-                    android:layout_height="44dp"
-                    android:background="@drawable/selector_card"
-                    android:focusable="true"
-                    android:minWidth="100dp"
-                    android:text="♫  Spotify"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp"
-                    android:visibility="gone" />
-            </LinearLayout>
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
             <!-- Tiêu đề Dock Yêu thích -->
             <TextView
