@@ -23,10 +23,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.text.InputType;
 
 import com.cleantv.launcher.adapter.AppGridAdapter;
 import com.cleantv.launcher.model.AppModel;
@@ -408,6 +410,38 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
     }
 
     private void showSettingsMenu() {
+        final String savedPin = PrefUtils.getSettingsPin(this);
+        final boolean setupPin = savedPin == null || savedPin.length() < 4;
+        final EditText pinInput = new EditText(this);
+        pinInput.setSingleLine(true);
+        pinInput.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+        pinInput.setHint(setupPin ? "Tạo mã PIN 4–6 số" : "Nhập mã PIN cài đặt");
+        new AlertDialog.Builder(this)
+                .setTitle(setupPin ? "Tạo mã PIN phụ huynh" : "Cài đặt được bảo vệ")
+                .setMessage(setupPin ? "Tạo mã PIN để bảo vệ phần cài đặt CleanTV." : "Nhập mã PIN để mở cài đặt.")
+                .setView(pinInput)
+                .setPositiveButton(setupPin ? "Lưu PIN" : "Mở cài đặt", new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+                        String entered = pinInput.getText().toString().trim();
+                        if (setupPin) {
+                            if (!entered.matches("[0-9]{4,6}")) {
+                                Toast.makeText(MainActivity.this, "PIN phải gồm 4–6 chữ số.", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                            PrefUtils.setSettingsPin(MainActivity.this, entered);
+                            showSettingsMenuUnlocked();
+                        } else if (entered.equals(savedPin)) {
+                            showSettingsMenuUnlocked();
+                        } else {
+                            Toast.makeText(MainActivity.this, "Sai mã PIN cài đặt.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
+    }
+
+    private void showSettingsMenuUnlocked() {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_app_options);
