@@ -54,6 +54,9 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
     private TvGridView gridAllApps;
     private TextView tvLoading;
     private Button btnAllApps;
+    private Button btnVtvgo;
+    private Button btnYoutube;
+    private Button btnSpotify;
     private TextView tvTitleAllApps;
     private boolean showingAllApps = false;
 
@@ -102,6 +105,35 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
         tvLoading = (TextView) findViewById(R.id.tv_loading);
         btnAllApps = (Button) findViewById(R.id.btn_all_apps);
         tvTitleAllApps = (TextView) findViewById(R.id.tv_title_all_apps);
+        btnVtvgo = (Button) findViewById(R.id.btn_vtvgo);
+        btnYoutube = (Button) findViewById(R.id.btn_youtube);
+        btnSpotify = (Button) findViewById(R.id.btn_spotify);
+
+        // Các nút chỉ gọi ứng dụng đã cài; không tải APK hoặc thay đổi hệ thống.
+        btnVtvgo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchFirstInstalledPackage(new String[] {
+                        "vn.vtv.vtvgo", "vn.vtv.vtvgotv"
+                }, "VTVgo");
+            }
+        });
+        btnYoutube.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchFirstInstalledPackage(new String[] {
+                        "com.google.android.youtube", "com.google.android.youtube.tv"
+                }, "YouTube");
+            }
+        });
+        btnSpotify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchFirstInstalledPackage(new String[] {
+                        "com.spotify.music"
+                }, "Spotify");
+            }
+        });
         btnAllApps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,6 +156,34 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
                 showSettingsMenu();
             }
         });
+    }
+
+    /**
+     * Mở ứng dụng nếu đã cài. Không tự cài APK hay gọi nguồn phát không chính thức.
+     */
+    private boolean isPackageLaunchable(String packageName) {
+        try {
+            Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
+            return launchIntent != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private void launchFirstInstalledPackage(String[] packageNames, String displayName) {
+        for (String packageName : packageNames) {
+            try {
+                Intent launchIntent = getPackageManager().getLaunchIntentForPackage(packageName);
+                if (launchIntent != null) {
+                    launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(launchIntent);
+                    return;
+                }
+            } catch (Exception ignored) {
+                // Thử tên gói tiếp theo nếu có.
+            }
+        }
+        Toast.makeText(this, displayName + " chưa được cài đặt hoặc không tương thích trên TV Box này.", Toast.LENGTH_LONG).show();
     }
 
     private void updateDate() {
@@ -216,6 +276,9 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
 
                 renderDock();
                 renderGrid();
+
+                // Spotify chỉ xuất hiện khi ứng dụng đã cài và có thể được mở.
+                btnSpotify.setVisibility(isPackageLaunchable("com.spotify.music") ? View.VISIBLE : View.GONE);
 
                 if (!favoriteApps.isEmpty()) {
                     updateTopShelf(favoriteApps.get(0));
