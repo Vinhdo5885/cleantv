@@ -110,7 +110,6 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
                 showingAllApps = !showingAllApps;
                 gridAllApps.setVisibility(showingAllApps ? View.VISIBLE : View.GONE);
                 spacerDockTop.setVisibility(showingAllApps ? View.GONE : View.VISIBLE);
-                layoutDockApps.getParent();
                 tvTitleFavorites.setVisibility(showingAllApps ? View.GONE : View.VISIBLE);
                 scrollDock.setVisibility(showingAllApps ? View.GONE : View.VISIBLE);
                 btnAllApps.setText(showingAllApps ? "‹  Về màn hình chính" : "Tất cả ứng dụng  ›");
@@ -220,8 +219,6 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
                 renderDock();
                 renderGrid();
 
-                // Spotify chỉ xuất hiện khi ứng dụng đã cài và có thể được mở.
-
                 if (!favoriteApps.isEmpty()) {
                     updateTopShelf(favoriteApps.get(0));
                 } else if (!allApps.isEmpty()) {
@@ -239,7 +236,7 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
             return;
         }
 
-        tvTitleFavorites.setVisibility(View.VISIBLE);
+        tvTitleFavorites.setVisibility(View.GONE);
         scrollDock.setVisibility(View.VISIBLE);
 
         LayoutInflater inflater = LayoutInflater.from(this);
