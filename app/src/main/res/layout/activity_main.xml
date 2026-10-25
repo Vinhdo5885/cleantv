@@ -16,8 +16,8 @@
     <RelativeLayout
         android:id="@+id/layout_top_shelf"
         android:layout_width="match_parent"
-        android:layout_height="96dp"
-        android:background="@drawable/bg_top_shelf"
+        android:layout_height="64dp"
+        android:background="@android:color/transparent"
         android:paddingLeft="20dp"
         android:paddingTop="10dp"
         android:paddingRight="20dp"
@@ -34,8 +34,8 @@
 
             <ImageView
                 android:id="@+id/shelf_app_icon"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:contentDescription="@null"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_launcher" />
@@ -53,7 +53,7 @@
                     android:layout_height="wrap_content"
                     android:text="Xin chào, Vinhdh"
                     android:textColor="#FFFFFF"
-                    android:textSize="22sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <!-- Dòng trạng thái ngữ cảnh -->
@@ -62,9 +62,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="Hôm nay bạn muốn xem gì?"
+                    android:text="ATV Launcher · Nhấn OK để mở"
                     android:textColor="#9CA3AF"
-                    android:textSize="13sp" />
+                    android:textSize="11sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -83,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:format24Hour="HH:mm"
                 android:textColor="#FFFFFF"
-                android:textSize="28sp"
+                android:textSize="22sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -116,7 +116,7 @@
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="0dp"
         android:layout_weight="1"
         android:fillViewport="true"
         android:scrollbars="none">
@@ -133,7 +133,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="6dp"
                 android:letterSpacing="0.06"
-                android:text="YÊU THÍCH"
+                android:text=" "
                 android:textColor="#9CA3AF"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -189,7 +189,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="42dp"
                 android:layout_gravity="end"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:background="@drawable/selector_card"
                 android:focusable="true"
                 android:paddingLeft="24dp"
