@@ -8,6 +8,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -20,10 +23,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.text.InputType;
 
 import com.cleantv.launcher.adapter.AppGridAdapter;
 import com.cleantv.launcher.model.AppModel;
@@ -31,6 +36,10 @@ import com.cleantv.launcher.service.LockTimerService;
 import com.cleantv.launcher.utils.PrefUtils;
 import com.cleantv.launcher.view.TvGridView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,6 +62,12 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
     private View scrollDock;
     private TvGridView gridAllApps;
     private TextView tvLoading;
+    private Button btnAllApps;
+    private View spacerDockTop;
+    private TextView tvTitleAllApps;
+    private boolean showingAllApps = false;
+    private static final int REQUEST_WALLPAPER = 7201;
+    private View homeRoot;
 
     private List<AppModel> allApps = new ArrayList<>();
     private List<AppModel> favoriteApps = new ArrayList<>();
@@ -62,8 +77,10 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        homeRoot = ((android.view.ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
 
         initViews();
+        applySavedWallpaper();
         updateDate();
 
         // Khởi động dịch vụ theo dõi hẹn giờ khóa màn hình
@@ -97,6 +114,21 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
         scrollDock = findViewById(R.id.scroll_dock);
         gridAllApps = (TvGridView) findViewById(R.id.grid_all_apps);
         tvLoading = (TextView) findViewById(R.id.tv_loading);
+        btnAllApps = (Button) findViewById(R.id.btn_all_apps);
+        tvTitleAllApps = (TextView) findViewById(R.id.tv_title_all_apps);
+        spacerDockTop = findViewById(R.id.spacer_dock_top);
+        btnAllApps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showingAllApps = !showingAllApps;
+                gridAllApps.setVisibility(showingAllApps ? View.VISIBLE : View.GONE);
+                spacerDockTop.setVisibility(showingAllApps ? View.GONE : View.VISIBLE);
+                tvTitleFavorites.setVisibility(showingAllApps ? View.GONE : View.VISIBLE);
+                scrollDock.setVisibility(showingAllApps ? View.GONE : View.VISIBLE);
+                btnAllApps.setText(showingAllApps ? "‹  Về màn hình chính" : "Tất cả ứng dụng  ›");
+                btnAllApps.requestFocus();
+            }
+        });
 
         tvGreeting.setText(PrefUtils.getUserGreeting(this));
         shelfAppDesc.setText("Hôm nay bạn muốn xem gì?");
@@ -153,7 +185,7 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
 
                 List<ResolveInfo> activities = pm.queryIntentActivities(mainIntent, 0);
                 Set<String> hiddenApps = PrefUtils.getHiddenApps(MainActivity.this);
-                Set<String> favorites = PrefUtils.getFavorites(MainActivity.this);
+                List<String> recentPackages = PrefUtils.getRecentApps(MainActivity.this);
                 String myPackage = getPackageName();
 
                 if (activities != null) {
@@ -167,25 +199,22 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
                         String activityName = ri.activityInfo.name;
 
                         AppModel app = new AppModel(pkg, activityName, label, icon);
-                        if (favorites.contains(pkg)) {
-                            app.setFavorite(true);
-                            tempFavs.add(app);
-                        }
                         tempAll.add(app);
                     }
                 }
 
                 Collections.sort(tempAll);
-                Collections.sort(tempFavs);
-
-                if (tempFavs.isEmpty() && !tempAll.isEmpty()) {
-                    int count = Math.min(tempAll.size(), 4);
-                    for (int i = 0; i < count; i++) {
-                        AppModel defaultFav = tempAll.get(i);
-                        defaultFav.setFavorite(true);
-                        tempFavs.add(defaultFav);
-                        PrefUtils.addFavorite(MainActivity.this, defaultFav.getPackageName());
+                for (String recentPackage : recentPackages) {
+                    for (AppModel app : tempAll) {
+                        if (app.getPackageName().equals(recentPackage)) {
+                            tempFavs.add(app);
+                            break;
+                        }
                     }
+                }
+                if (tempFavs.isEmpty() && !tempAll.isEmpty()) {
+                    int count = Math.min(tempAll.size(), 5);
+                    for (int i = 0; i < count; i++) tempFavs.add(tempAll.get(i));
                 }
 
                 return null;
@@ -217,6 +246,7 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
             return;
         }
 
+        tvTitleFavorites.setText("ỨNG DỤNG MỞ GẦN ĐÂY");
         tvTitleFavorites.setVisibility(View.VISIBLE);
         scrollDock.setVisibility(View.VISIBLE);
 
@@ -233,7 +263,7 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (hasFocus) {
-                        v.animate().scaleX(1.15f).scaleY(1.15f).setDuration(120).start();
+                        v.animate().scaleX(1.10f).scaleY(1.10f).setDuration(140).start();
                         v.bringToFront();
                         updateTopShelf(app);
                     } else {
@@ -264,10 +294,12 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
     private void renderGrid() {
         gridAdapter = new AppGridAdapter(this, allApps, this);
         gridAllApps.setAdapter(gridAdapter);
+        gridAllApps.setVisibility(showingAllApps ? View.VISIBLE : View.GONE);
     }
 
     @Override
     public void onAppClick(AppModel app) {
+        PrefUtils.recordRecentApp(this, app.getPackageName());
         try {
             Intent intent = new Intent(Intent.ACTION_MAIN);
             intent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -378,6 +410,38 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
     }
 
     private void showSettingsMenu() {
+        final String savedPin = PrefUtils.getSettingsPin(this);
+        final boolean setupPin = savedPin == null || savedPin.length() < 4;
+        final EditText pinInput = new EditText(this);
+        pinInput.setSingleLine(true);
+        pinInput.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+        pinInput.setHint(setupPin ? "Tạo mã PIN 4–6 số" : "Nhập mã PIN cài đặt");
+        new AlertDialog.Builder(this)
+                .setTitle(setupPin ? "Tạo mã PIN phụ huynh" : "Cài đặt được bảo vệ")
+                .setMessage(setupPin ? "Tạo mã PIN để bảo vệ phần cài đặt CleanTV." : "Nhập mã PIN để mở cài đặt.")
+                .setView(pinInput)
+                .setPositiveButton(setupPin ? "Lưu PIN" : "Mở cài đặt", new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+                        String entered = pinInput.getText().toString().trim();
+                        if (setupPin) {
+                            if (!entered.matches("[0-9]{4,6}")) {
+                                Toast.makeText(MainActivity.this, "PIN phải gồm 4–6 chữ số.", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                            PrefUtils.setSettingsPin(MainActivity.this, entered);
+                            showSettingsMenuUnlocked();
+                        } else if (entered.equals(savedPin)) {
+                            showSettingsMenuUnlocked();
+                        } else {
+                            Toast.makeText(MainActivity.this, "Sai mã PIN cài đặt.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
+    }
+
+    private void showSettingsMenuUnlocked() {
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_app_options);
@@ -398,16 +462,20 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
         btnFilterVnpt.setText("🧹  Dọn sạch & Ẩn toàn bộ app rác VNPT");
         btnUnhideAll.setText("👁  Khôi phục tất cả ứng dụng đã ẩn");
 
-        // Nút Hẹn giờ khóa màn hình
+        // Cài đặt giới hạn khung giờ và tổng thời lượng xem mỗi ngày
         btnTimerLock.setVisibility(View.VISIBLE);
-        int currentMinutes = PrefUtils.getLockDurationMinutes(this);
-        if (currentMinutes > 0) {
-            btnTimerLock.setText("⏱  Hẹn giờ khóa: Đang bật (" + currentMinutes + " phút)");
-        } else {
-            btnTimerLock.setText("⏱  Hẹn giờ khóa màn hình (15p, 30p, 1h...)");
-        }
+        btnTimerLock.setText("⏱  Giới hạn giờ xem và thời lượng mỗi ngày");
+        
+        btnUninstall.setVisibility(View.VISIBLE);
+        btnUninstall.setText("🖼  Chọn ảnh nền từ USB / bộ nhớ");
 
-        btnUninstall.setVisibility(View.GONE);
+        btnUninstall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                chooseWallpaper();
+            }
+        });
 
         btnOpenSettings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -459,41 +527,133 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
         dialog.show();
     }
 
+    private File getWallpaperFile() {
+        return new File(getFilesDir(), "cleantv_wallpaper.jpg");
+    }
+
+    private void chooseWallpaper() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(Intent.createChooser(intent, "Chọn ảnh nền"), REQUEST_WALLPAPER);
+        } catch (Exception e) {
+            Toast.makeText(this, "Không mở được trình chọn ảnh. Hãy thử ứng dụng Thư viện hoặc Quản lý tệp.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != REQUEST_WALLPAPER || resultCode != RESULT_OK || data == null || data.getData() == null) {
+            return;
+        }
+
+        InputStream input = null;
+        FileOutputStream output = null;
+        File tempFile = new File(getFilesDir(), "cleantv_wallpaper.tmp");
+        try {
+            input = getContentResolver().openInputStream(data.getData());
+            if (input == null) throw new IOException("Không đọc được ảnh đã chọn");
+            output = new FileOutputStream(tempFile);
+            byte[] buffer = new byte[8192];
+            int count;
+            while ((count = input.read(buffer)) != -1) {
+                output.write(buffer, 0, count);
+            }
+            output.flush();
+            output.close();
+            output = null;
+            input.close();
+            input = null;
+
+            File wallpaper = getWallpaperFile();
+            if (wallpaper.exists() && !wallpaper.delete()) {
+                throw new IOException("Không thể thay ảnh nền cũ");
+            }
+            if (!tempFile.renameTo(wallpaper)) {
+                throw new IOException("Không thể lưu ảnh nền");
+            }
+            applySavedWallpaper();
+            Toast.makeText(this, "Đã đặt ảnh nền CleanTV", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            if (tempFile.exists()) tempFile.delete();
+            Toast.makeText(this, "Không thể dùng ảnh này. Hãy chọn JPG hoặc PNG khác.", Toast.LENGTH_LONG).show();
+        } finally {
+            try { if (input != null) input.close(); } catch (IOException ignored) { }
+            try { if (output != null) output.close(); } catch (IOException ignored) { }
+        }
+    }
+
+    private void applySavedWallpaper() {
+        File file = getWallpaperFile();
+        if (homeRoot == null || !file.exists()) return;
+        try {
+            BitmapFactory.Options bounds = new BitmapFactory.Options();
+            bounds.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(file.getAbsolutePath(), bounds);
+            int sample = 1;
+            while (bounds.outWidth / sample > 1920 || bounds.outHeight / sample > 1080) {
+                sample *= 2;
+            }
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = sample;
+            Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(), options);
+            if (bitmap != null) {
+                homeRoot.setBackground(new BitmapDrawable(getResources(), bitmap));
+            }
+        } catch (OutOfMemoryError e) {
+            Toast.makeText(this, "Ảnh quá lớn đối với SmartBox. Hãy dùng ảnh nhỏ hơn.", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Không thể tải ảnh nền đã lưu.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     /**
      * Hộp thoại chọn thời gian cho phép xem TV trước khi khóa màn hình
      */
     private void showTimerSelectionDialog() {
-        final String[] options = {
-                "Tắt hẹn giờ (Không khóa)",
-                "15 phút",
-                "30 phút",
-                "45 phút",
-                "1 giờ (60 phút)",
-                "2 giờ (120 phút)",
-                "3 giờ (180 phút)"
+        final String[] hourOptions = {
+                "06:00–22:00 (mặc định)", "07:00–21:00", "08:00–20:00",
+                "09:00–21:00", "Tắt giới hạn khung giờ"
         };
-        final int[] minutesValues = {0, 15, 30, 45, 60, 120, 180};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Chọn thời gian xem TV trước khi khóa:");
-        builder.setItems(options, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                int selectedMinutes = minutesValues[which];
-                PrefUtils.setLockDurationMinutes(MainActivity.this, selectedMinutes);
-                PrefUtils.setLockStartTime(MainActivity.this, System.currentTimeMillis());
-                PrefUtils.setScreenLocked(MainActivity.this, false);
-
-                if (selectedMinutes > 0) {
-                    Toast.makeText(MainActivity.this, "✓ Đã bật hẹn giờ: Khóa sau " + selectedMinutes + " phút!", Toast.LENGTH_LONG).show();
-                    LockTimerService.startTimer(MainActivity.this);
-                } else {
-                    Toast.makeText(MainActivity.this, "Đã tắt hẹn giờ khóa màn hình", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        builder.setNegativeButton("Đóng", null);
-        builder.show();
+        final int[] startHours = {6, 7, 8, 9, 0};
+        final int[] endHours = {22, 21, 20, 21, 0};
+        new AlertDialog.Builder(this)
+                .setTitle("1/2 — Chọn khung giờ được xem")
+                .setItems(hourOptions, new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+                        final int start = startHours[which];
+                        final int end = endHours[which];
+                        final String[] durationOptions = {
+                                "1 giờ mỗi ngày", "2 giờ mỗi ngày", "3 giờ mỗi ngày",
+                                "4 giờ mỗi ngày", "5 giờ mỗi ngày", "Không giới hạn thời lượng"
+                        };
+                        final int[] limits = {60, 120, 180, 240, 300, 0};
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("2/2 — Chọn tổng thời lượng mỗi ngày")
+                                .setItems(durationOptions, new DialogInterface.OnClickListener() {
+                                    @Override public void onClick(DialogInterface d, int choice) {
+                                        PrefUtils.setAllowedHours(MainActivity.this, start, end);
+                                        PrefUtils.setDailyLimitMinutes(MainActivity.this, limits[choice]);
+                                        PrefUtils.setLockDurationMinutes(MainActivity.this, limits[choice]);
+                                        PrefUtils.setLockStartTime(MainActivity.this, System.currentTimeMillis());
+                                        boolean outsideHours = start != end && !PrefUtils.isWithinAllowedHours(MainActivity.this);
+                                        boolean dailyLimitReached = limits[choice] > 0 &&
+                                                PrefUtils.getDailyUsedMillis(MainActivity.this) >= limits[choice] * 60000L;
+                                        PrefUtils.setScreenLocked(MainActivity.this, outsideHours || dailyLimitReached);
+                                        LockTimerService.startTimer(MainActivity.this);
+                                        Toast.makeText(MainActivity.this,
+                                                "Đã lưu giới hạn giờ xem. PIN chỉ dùng để vào Cài đặt.",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                })
+                                .setNegativeButton("Hủy", null)
+                                .show();
+                    }
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
     }
 
     @Override

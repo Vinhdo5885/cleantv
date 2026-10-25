@@ -62,7 +62,7 @@
             android:paddingTop="8dp"
             android:paddingRight="16dp"
             android:paddingBottom="8dp"
-            android:text="Bấm phím OK 5 lần liên tiếp trên Remote để mở khóa"
+            android:text="TV sẽ tự mở lại khi khung giờ cho phép và còn thời lượng hôm nay"
             android:textColor="#D1D5DB"
             android:textSize="13sp" />
 

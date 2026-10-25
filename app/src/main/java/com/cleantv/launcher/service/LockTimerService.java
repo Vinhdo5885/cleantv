@@ -10,13 +10,13 @@ import com.cleantv.launcher.LockActivity;
 import com.cleantv.launcher.utils.PrefUtils;
 
 public class LockTimerService extends Service {
-
     private final Handler handler = new Handler();
     private Runnable timerRunnable;
+    private long lastTickMillis = 0L;
+    private boolean lockScreenShown = false;
 
     public static void startTimer(Context context) {
-        Intent intent = new Intent(context, LockTimerService.class);
-        context.startService(intent);
+        context.startService(new Intent(context, LockTimerService.class));
     }
 
     @Override
@@ -26,55 +26,51 @@ public class LockTimerService extends Service {
     }
 
     private void startMonitoring() {
-        if (timerRunnable != null) {
-            handler.removeCallbacks(timerRunnable);
-        }
-
+        if (timerRunnable != null) handler.removeCallbacks(timerRunnable);
+        lastTickMillis = System.currentTimeMillis();
         timerRunnable = new Runnable() {
-            @Override
-            public void run() {
-                int durationMinutes = PrefUtils.getLockDurationMinutes(LockTimerService.this);
-                if (durationMinutes > 0) {
-                    long startTime = PrefUtils.getLockStartTime(LockTimerService.this);
-                    if (startTime == 0) {
-                        startTime = System.currentTimeMillis();
-                        PrefUtils.setLockStartTime(LockTimerService.this, startTime);
-                    }
+            @Override public void run() {
+                long now = System.currentTimeMillis();
+                long delta = Math.max(0L, Math.min(now - lastTickMillis, 60000L));
+                lastTickMillis = now;
 
-                    long elapsedMillis = System.currentTimeMillis() - startTime;
-                    long limitMillis = (long) durationMinutes * 60 * 1000L;
+                boolean inHours = PrefUtils.isWithinAllowedHours(LockTimerService.this);
+                int limitMinutes = PrefUtils.getDailyLimitMinutes(LockTimerService.this);
+                long usedMillis = PrefUtils.getDailyUsedMillis(LockTimerService.this);
+                long limitMillis = Math.max(0, limitMinutes) * 60000L;
 
-                    if (elapsedMillis >= limitMillis || PrefUtils.isScreenLocked(LockTimerService.this)) {
-                        // Kích hoạt khóa màn hình
-                        PrefUtils.setScreenLocked(LockTimerService.this, true);
+                boolean dailyLimitReached = limitMinutes > 0 && usedMillis >= limitMillis;
+                boolean timeExpired = !inHours || dailyLimitReached;
+
+                if (timeExpired) {
+                    PrefUtils.setScreenLocked(LockTimerService.this, true);
+                    if (!lockScreenShown) {
+                        lockScreenShown = true;
                         showLockScreen();
                     }
+                } else {
+                    if (PrefUtils.isScreenLocked(LockTimerService.this)) {
+                        PrefUtils.setScreenLocked(LockTimerService.this, false);
+                    }
+                    lockScreenShown = false;
+                    PrefUtils.addDailyUsedMillis(LockTimerService.this, delta);
                 }
-
-                // Kiểm tra lại mỗi 5 giây
-                handler.postDelayed(this, 5000);
+                handler.postDelayed(this, 5000L);
             }
         };
-
         handler.post(timerRunnable);
     }
 
     private void showLockScreen() {
-        Intent lockIntent = new Intent(this, LockActivity.class);
-        lockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(lockIntent);
+        Intent intent = new Intent(this, LockActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
-    @Override
-    public void onDestroy() {
-        if (timerRunnable != null) {
-            handler.removeCallbacks(timerRunnable);
-        }
+    @Override public void onDestroy() {
+        if (timerRunnable != null) handler.removeCallbacks(timerRunnable);
         super.onDestroy();
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+    @Override public IBinder onBind(Intent intent) { return null; }
 }

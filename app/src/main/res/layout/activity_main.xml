@@ -4,10 +4,10 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_wallpaper"
     android:orientation="vertical"
-    android:paddingLeft="40dp"
-    android:paddingTop="22dp"
-    android:paddingRight="40dp"
-    android:paddingBottom="18dp">
+    android:paddingLeft="36dp"
+    android:paddingTop="24dp"
+    android:paddingRight="36dp"
+    android:paddingBottom="12dp">
 
     <!-- ======================================================== -->
     <!-- PHẦN 1: MÀN HÌNH CHÀO VÀ TOP SHELF (LIQUID GLASS APPLE)   -->
@@ -16,12 +16,12 @@
     <RelativeLayout
         android:id="@+id/layout_top_shelf"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:background="@drawable/bg_top_shelf"
-        android:paddingLeft="24dp"
-        android:paddingTop="18dp"
-        android:paddingRight="24dp"
-        android:paddingBottom="18dp">
+        android:layout_height="104dp"
+        android:background="@android:color/transparent"
+        android:paddingLeft="8dp"
+        android:paddingTop="4dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="4dp">
 
         <!-- Lời chào "Xin chào, Vinhdh" và biểu tượng App (Trái) -->
         <LinearLayout
@@ -34,8 +34,8 @@
 
             <ImageView
                 android:id="@+id/shelf_app_icon"
-                android:layout_width="68dp"
-                android:layout_height="68dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:contentDescription="@null"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_launcher" />
@@ -43,7 +43,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+                android:layout_marginLeft="10dp"
                 android:orientation="vertical">
 
                 <!-- Lời chào chính cá nhân hóa -->
@@ -53,7 +53,7 @@
                     android:layout_height="wrap_content"
                     android:text="Xin chào, Vinhdh"
                     android:textColor="#FFFFFF"
-                    android:textSize="28sp"
+                    android:textSize="26sp"
                     android:textStyle="bold" />
 
                 <!-- Dòng trạng thái ngữ cảnh -->
@@ -62,9 +62,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="Hôm nay bạn muốn xem gì?"
+                    android:text="ATV Launcher · Nhấn OK để mở"
                     android:textColor="#9CA3AF"
-                    android:textSize="15sp" />
+                    android:textSize="11sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -83,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:format24Hour="HH:mm"
                 android:textColor="#FFFFFF"
-                android:textSize="38sp"
+                android:textSize="40sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -92,13 +92,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textColor="#9CA3AF"
-                android:textSize="13sp" />
+                android:textSize="14sp" />
 
             <Button
                 android:id="@+id/btn_settings"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="2dp"
                 android:background="@drawable/selector_card"
                 android:focusable="true"
                 android:paddingLeft="12dp"
@@ -116,39 +116,46 @@
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="0dp"
         android:layout_weight="1"
         android:fillViewport="true"
         android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <View
+                android:id="@+id/spacer_dock_top"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
             <!-- Tiêu đề Dock Yêu thích -->
             <TextView
                 android:id="@+id/tv_title_favorites"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="0dp"
                 android:letterSpacing="0.06"
-                android:text="YÊU THÍCH"
-                android:textColor="#9CA3AF"
+                android:text="ỨNG DỤNG MỞ GẦN ĐÂY"
+                android:textColor="#D1D5DB"
                 android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <!-- Khung Dock Kính Lỏng (Liquid Glass) bo cong chuẩn iOS -->
             <HorizontalScrollView
                 android:id="@+id/scroll_dock"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_glass_dock"
+                android:background="@android:color/transparent"
                 android:clipToPadding="false"
-                android:paddingLeft="16dp"
-                android:paddingTop="12dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="12dp"
+                android:paddingLeft="4dp"
+                android:paddingTop="8dp"
+                android:paddingRight="4dp"
+                android:paddingBottom="8dp"
                 android:scrollbars="none">
 
                 <LinearLayout
@@ -161,25 +168,42 @@
 
             <!-- Tiêu đề Tất cả ứng dụng -->
             <TextView
+                android:id="@+id/tv_title_all_apps"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="12dp"
                 android:letterSpacing="0.06"
-                android:text="ỨNG DỤNG"
+                android:text="TẤT CẢ ỨNG DỤNG"
                 android:textColor="#9CA3AF"
                 android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <!-- Lưới ứng dụng -->
             <com.cleantv.launcher.view.TvGridView
                 android:id="@+id/grid_all_apps"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:horizontalSpacing="16dp"
                 android:numColumns="5"
                 android:stretchMode="columnWidth"
                 android:verticalSpacing="16dp" />
+
+            <Button
+                android:id="@+id/btn_all_apps"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_gravity="end"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/selector_card"
+                android:focusable="true"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
+                android:text="Tất cả ứng dụng  ›"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/tv_loading"
