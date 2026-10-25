@@ -53,6 +53,8 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
     private View scrollDock;
     private TvGridView gridAllApps;
     private TextView tvLoading;
+    private Button btnAllApps;
+    private boolean showingAllApps = false;
 
     private List<AppModel> allApps = new ArrayList<>();
     private List<AppModel> favoriteApps = new ArrayList<>();
@@ -97,6 +99,19 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
         scrollDock = findViewById(R.id.scroll_dock);
         gridAllApps = (TvGridView) findViewById(R.id.grid_all_apps);
         tvLoading = (TextView) findViewById(R.id.tv_loading);
+        btnAllApps = (Button) findViewById(R.id.btn_all_apps);
+        btnAllApps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showingAllApps = !showingAllApps;
+                gridAllApps.setVisibility(showingAllApps ? View.VISIBLE : View.GONE);
+                layoutDockApps.getParent();
+                tvTitleFavorites.setVisibility(showingAllApps ? View.GONE : View.VISIBLE);
+                scrollDock.setVisibility(showingAllApps ? View.GONE : View.VISIBLE);
+                btnAllApps.setText(showingAllApps ? "‹  Về màn hình chính" : "Tất cả ứng dụng  ›");
+                btnAllApps.requestFocus();
+            }
+        });
 
         tvGreeting.setText(PrefUtils.getUserGreeting(this));
         shelfAppDesc.setText("Hôm nay bạn muốn xem gì?");
@@ -264,6 +279,7 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
     private void renderGrid() {
         gridAdapter = new AppGridAdapter(this, allApps, this);
         gridAllApps.setAdapter(gridAdapter);
+        gridAllApps.setVisibility(showingAllApps ? View.VISIBLE : View.GONE);
     }
 
     @Override
