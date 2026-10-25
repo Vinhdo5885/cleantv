@@ -161,6 +161,7 @@
 
             <!-- Tiêu đề Tất cả ứng dụng -->
             <TextView
+                android:id="@+id/tv_title_all_apps"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
