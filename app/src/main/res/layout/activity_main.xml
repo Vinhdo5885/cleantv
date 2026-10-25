@@ -16,12 +16,12 @@
     <RelativeLayout
         android:id="@+id/layout_top_shelf"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="58dp"
         android:background="@android:color/transparent"
-        android:paddingLeft="20dp"
-        android:paddingTop="10dp"
-        android:paddingRight="20dp"
-        android:paddingBottom="10dp">
+        android:paddingLeft="8dp"
+        android:paddingTop="4dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="4dp">
 
         <!-- Lời chào "Xin chào, Vinhdh" và biểu tượng App (Trái) -->
         <LinearLayout
@@ -34,8 +34,8 @@
 
             <ImageView
                 android:id="@+id/shelf_app_icon"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:contentDescription="@null"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_launcher" />
@@ -43,7 +43,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
+                android:layout_marginLeft="10dp"
                 android:orientation="vertical">
 
                 <!-- Lời chào chính cá nhân hóa -->
@@ -53,7 +53,7 @@
                     android:layout_height="wrap_content"
                     android:text="Xin chào, Vinhdh"
                     android:textColor="#FFFFFF"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <!-- Dòng trạng thái ngữ cảnh -->
@@ -83,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:format24Hour="HH:mm"
                 android:textColor="#FFFFFF"
-                android:textSize="22sp"
+                android:textSize="20sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -98,7 +98,7 @@
                 android:id="@+id/btn_settings"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="2dp"
                 android:background="@drawable/selector_card"
                 android:focusable="true"
                 android:paddingLeft="12dp"
@@ -137,12 +137,13 @@
                 android:id="@+id/tv_title_favorites"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
+                android:layout_marginBottom="0dp"
                 android:letterSpacing="0.06"
-                android:text=" "
+                android:text=""
                 android:textColor="#9CA3AF"
                 android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
 
             <!-- Khung Dock Kính Lỏng (Liquid Glass) bo cong chuẩn iOS -->
             <HorizontalScrollView
