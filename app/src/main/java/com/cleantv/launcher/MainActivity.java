@@ -462,15 +462,10 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
         btnFilterVnpt.setText("🧹  Dọn sạch & Ẩn toàn bộ app rác VNPT");
         btnUnhideAll.setText("👁  Khôi phục tất cả ứng dụng đã ẩn");
 
-        // Nút Hẹn giờ khóa màn hình
+        // Cài đặt giới hạn khung giờ và tổng thời lượng xem mỗi ngày
         btnTimerLock.setVisibility(View.VISIBLE);
-        int currentMinutes = PrefUtils.getLockDurationMinutes(this);
-        if (currentMinutes > 0) {
-            btnTimerLock.setText("⏱  Hẹn giờ khóa: Đang bật (" + currentMinutes + " phút)");
-        } else {
-            btnTimerLock.setText("⏱  Hẹn giờ khóa màn hình (15p, 30p, 1h...)");
-        }
-
+        btnTimerLock.setText("⏱  Giới hạn giờ xem và thời lượng mỗi ngày");
+        
         btnUninstall.setVisibility(View.VISIBLE);
         btnUninstall.setText("🖼  Chọn ảnh nền từ USB / bộ nhớ");
 
@@ -618,21 +613,50 @@ public class MainActivity extends Activity implements AppGridAdapter.OnAppAction
      * Hộp thoại chọn thời gian cho phép xem TV trước khi khóa màn hình
      */
     private void showTimerSelectionDialog() {
-        final String[] options = {
-                "Tắt hẹn giờ (Không khóa)",
-                "15 phút",
-                "30 phút",
-                "45 phút",
-                "1 giờ (60 phút)",
-                "2 giờ (120 phút)",
-                "3 giờ (180 phút)"
+        final String[] hourOptions = {
+                "06:00–22:00 (mặc định)", "07:00–21:00", "08:00–20:00",
+                "09:00–21:00", "Tắt giới hạn khung giờ"
         };
-        final int[] minutesValues = {0, 15, 30, 45, 60, 120, 180};
+        final int[] startHours = {6, 7, 8, 9, 0};
+        final int[] endHours = {22, 21, 20, 21, 0};
+        new AlertDialog.Builder(this)
+                .setTitle("1/2 — Chọn khung giờ được xem")
+                .setItems(hourOptions, new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface dialog, int which) {
+                        final int start = startHours[which];
+                        final int end = endHours[which];
+                        final String[] durationOptions = {
+                                "1 giờ mỗi ngày", "2 giờ mỗi ngày", "3 giờ mỗi ngày",
+                                "4 giờ mỗi ngày", "5 giờ mỗi ngày", "Không giới hạn thời lượng"
+                        };
+                        final int[] limits = {60, 120, 180, 240, 300, 0};
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("2/2 — Chọn tổng thời lượng mỗi ngày")
+                                .setItems(durationOptions, new DialogInterface.OnClickListener() {
+                                    @Override public void onClick(DialogInterface d, int choice) {
+                                        PrefUtils.setAllowedHours(MainActivity.this, start, end);
+                                        PrefUtils.setDailyLimitMinutes(MainActivity.this, limits[choice]);
+                                        PrefUtils.setLockDurationMinutes(MainActivity.this, limits[choice]);
+                                        PrefUtils.setLockStartTime(MainActivity.this, System.currentTimeMillis());
+                                        boolean outsideHours = start != end && !PrefUtils.isWithinAllowedHours(MainActivity.this);
+                                        boolean dailyLimitReached = limits[choice] > 0 &&
+                                                PrefUtils.getDailyUsedMillis(MainActivity.this) >= limits[choice] * 60000L;
+                                        PrefUtils.setScreenLocked(MainActivity.this, outsideHours || dailyLimitReached);
+                                        LockTimerService.startTimer(MainActivity.this);
+                                        Toast.makeText(MainActivity.this,
+                                                "Đã lưu giới hạn giờ xem. PIN chỉ dùng để vào Cài đặt.",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                })
+                                .setNegativeButton("Hủy", null)
+                                .show();
+                    }
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
+    }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Chọn thời gian xem TV trước khi khóa:");
-        builder.setItems(options, new DialogInterface.OnClickListener() {
-            @Override
+    @Override
             public void onClick(DialogInterface dialog, int which) {
                 int selectedMinutes = minutesValues[which];
                 PrefUtils.setLockDurationMinutes(MainActivity.this, selectedMinutes);
