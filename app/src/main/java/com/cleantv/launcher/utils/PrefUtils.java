@@ -8,11 +8,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class PrefUtils {
     private static final String PREF_NAME = "cleantv_prefs";
     private static final String KEY_FAVORITES = "key_favorites";
+    private static final String KEY_RECENT_APPS = "key_recent_apps";
     private static final String KEY_HIDDEN = "key_hidden";
     private static final String KEY_FIRST_RUN = "key_first_run_filter";
     private static final String KEY_USER_GREETING = "key_user_greeting";
@@ -120,6 +123,34 @@ public class PrefUtils {
 
     public static boolean isFavorite(Context context, String packageName) {
         return getFavorites(context).contains(packageName);
+    }
+
+    // Danh sách ứng dụng mở gần đây nhất, mới nhất đứng đầu.
+    public static List<String> getRecentApps(Context context) {
+        String stored = getPrefs(context).getString(KEY_RECENT_APPS, "");
+        List<String> result = new ArrayList<String>();
+        if (stored == null || stored.trim().isEmpty()) return result;
+        String[] items = stored.split("\\n");
+        for (String item : items) {
+            if (item != null && !item.trim().isEmpty() && !result.contains(item.trim())) {
+                result.add(item.trim());
+            }
+        }
+        return result;
+    }
+
+    public static void recordRecentApp(Context context, String packageName) {
+        if (packageName == null || packageName.trim().isEmpty()) return;
+        List<String> recent = getRecentApps(context);
+        recent.remove(packageName);
+        recent.add(0, packageName);
+        while (recent.size() > 10) recent.remove(recent.size() - 1);
+        StringBuilder stored = new StringBuilder();
+        for (String item : recent) {
+            if (stored.length() > 0) stored.append("\\n");
+            stored.append(item);
+        }
+        getPrefs(context).edit().putString(KEY_RECENT_APPS, stored.toString()).apply();
     }
 
     public static Set<String> getHiddenApps(Context context) {
